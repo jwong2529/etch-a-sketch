@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etch-a-Sketch</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="JS/script.js" defer></script>
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Etch-a-Sketch</h1>
+    <div class="game-area">
+        <div class="toolbar">
+            <input type="color" id = "colorpicker" value="#000000">
+            <button class="color-mode tool">Color mode</button>
+            <button class="eraser tool">Eraser</button>
+            <button class="clear tool">Clear</button>
+            <button class="grid-size tool">Grid size</button>
+            <div class="slider">
+                <p id="rangeValue">16 x 16</p>
+                <input class="mouseSlide" type="range" min="1" max="64" value="16">
+            </div>
+        </div>
+        <div class="sketchboard">
+            <div class="drawing-board"></div>
+            <!-- Give option to export img into downloads -->
+            <div class="board-row">
+                <div class="fake-buttons"></div>
+                <button class="export">Export to downloads</button>
+                <div class="fake-buttons"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
