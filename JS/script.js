@@ -4,17 +4,23 @@ const drawingBoard = document.querySelector(".drawing-board");
 const rangeSlider = document.querySelector(".mouseSlider");
 const rangeValue = document.querySelector("#rangeValue");
 const colorPicker = document.querySelector("#colorpicker");
-const eraser = document.querySelector(".eraser");
+const eraserButton = document.querySelector(".eraser");
 const colorButton = document.querySelector(".color-mode");
+const clearButton = document.querySelector(".clear");
+const rainbowButton = document.querySelector(".rainbow");
+const gridButton = document.querySelector(".grid-size");
 
-let color = true;
+let colorMode = true;
 let eraseMode = false;
+let rainbowMode = false;
+let gridMode = false;
 
-//should set this into window.load (ADD DEFAULT SETTINGS HERE!)
-setGridSize(16);
-coloring();
-
-
+//Default settings
+window.onload = () => {
+    setGridSize(16);
+    setBorder(colorButton);
+    coloring();
+};
 
 // setting the grid size based on slider value, default is 16 x 16
 //makes rows of divs and makes divs in each row
@@ -32,14 +38,12 @@ function setGridSize(num) {
             gridBox.classList.add('individual-box');
             //makes divs fill in each row
             gridBox.style.flex = "1";
-            //just to look at borders
-            //possibly include option for user to be able to see borders!
-            //when toggling, change grid size button borders
-            gridBox.style.borderColor = "black";
-            gridBox.style.borderWidth = "1px";
-            gridBox.style.borderStyle = "solid";
         }
     }
+    //Keeps coloring/erasing even if grid size is changed
+    coloring();
+    erasing();
+    randomColoring();
 }
 
 //clears grid boxes so aren't made on top of each other after each grid sizing
@@ -60,26 +64,6 @@ rangeSlider.addEventListener("input", function(e) {
     gridSizeLabel(rangeSlider.valueAsNumber);
 });
 
-
-//keeps track of when mouse is pressed
-let mouseDown = 0;
-drawingBoard.onmousedown = function() { 
-    mouseDown = 1;
-}
-drawingBoard.onmouseup = function() {
-    mouseDown = 0;
-}
-//colors when mouse is pressed + hovered over a div simultaneously
-function coloring() {
-    if (color === true) {
-        document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
-            if (mouseDown === 1) {
-                item.style.backgroundColor = colorPicker.value;
-            }
-        }));
-    }
-}
-
 function setBorder(tool) {
     tool.style.borderColor = "gold";
     tool.style.borderWidth = "3px";
@@ -92,19 +76,42 @@ function noBorder(tool) {
     tool.style.borderStyle = "none";
 }
 
+//keeps track of when mouse is pressed
+let mouseDown = 0;
+drawingBoard.onmousedown = function() { 
+    mouseDown = 1;
+}
+drawingBoard.onmouseup = function() {
+    mouseDown = 0;
+}
+//colors when mouse is pressed + hovered over a div simultaneously
+function coloring() {
+    if (colorMode === true) {
+        document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
+            if (mouseDown === 1) {
+                item.style.backgroundColor = colorPicker.value;
+            }
+        }));
+    }
+}
+
 colorButton.addEventListener("click", function(e) {
-    color = true;
+    colorMode = true;
     eraseMode = false;
+    rainbowMode = false;;
     setBorder(colorButton);
-    noBorder(eraser);
+    noBorder(eraserButton);
+    noBorder(rainbowButton);
     coloring();
 });
 
-eraser.addEventListener("click", function(e) {
-    color = false;
+eraserButton.addEventListener("click", function(e) {
     eraseMode = true;
-    setBorder(eraser);
+    colorMode = false;
+    rainbowMode = false;;
+    setBorder(eraserButton);
     noBorder(colorButton);
+    noBorder(rainbowButton);
     erasing();
 });
 function erasing() {
@@ -116,4 +123,49 @@ function erasing() {
         }));
     }
 }
+
+rainbowButton.addEventListener("click", function(e) {
+    rainbowMode = true;
+    colorMode = false;
+    eraseMode = false;
+    setBorder(rainbowButton);
+    noBorder(colorButton);
+    noBorder(eraserButton);
+    randomColoring();
+});
+function randomColoring() {
+    if (rainbowMode === true) {
+        document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
+            if (mouseDown === 1) {
+                let randomColor = Math.floor(Math.random()*16777215).toString(16);
+                item.style.backgroundColor = "#" + randomColor;
+            }
+        }));
+    }
+}
+
+//clear the canvas by changing color of all boxes to white
+function clearCanvas() {
+    document.querySelectorAll(".individual-box").forEach(item => item.style.backgroundColor = "#f6f4f4");
+}
+clearButton.addEventListener("click", clearCanvas);
+
+//toggle grid lines on and off
+function toggleGrid() {
+    if (gridMode === false) {
+        gridMode = true;
+        document.querySelectorAll(".individual-box").forEach(item => {
+            item.style.borderColor = "black";
+            item.style.borderWidth = "1px";
+            item.style.borderStyle = "solid";
+        });
+        setBorder(gridButton);
+    }
+    else {
+        gridMode = false;
+        document.querySelectorAll(".individual-box").forEach(item => noBorder(item));
+        noBorder(gridButton);
+    }
+}
+gridButton.addEventListener("click", toggleGrid);
 
