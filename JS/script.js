@@ -1,0 +1,29 @@
+
+
+const drawingBoard = document.querySelector(".drawing-board");
+
+
+
+// setting the grid size based on slider value, default is 16 x 16
+//makes rows of divs and makes divs in each row
+function setGridSize(num) {
+    for (let i = 0; i < num; i++) {
+        let gridRow = document.createElement('div');
+        drawingBoard.appendChild(gridRow);
+        gridRow.style.display = "flex";
+        //makes each div's width an entire row
+        gridRow.style.flex = "1";
+        for (let i = 0; i < num; i++) {
+            let gridBox = document.createElement('div');
+            gridRow.appendChild(gridBox);
+            //makes divs fill in each row
+            gridBox.style.flex = "1";
+            //just to look at borders
+            gridBox.style.borderColor = "black";
+            gridBox.style.borderWidth = "1px";
+            gridBox.style.borderStyle = "solid";
+        }
+    }
+}
+
+
