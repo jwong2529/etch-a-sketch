@@ -3,11 +3,17 @@
 const drawingBoard = document.querySelector(".drawing-board");
 const rangeSlider = document.querySelector(".mouseSlider");
 const rangeValue = document.querySelector("#rangeValue");
-const colorMode = document.querySelector("#colorpicker");
+const colorPicker = document.querySelector("#colorpicker");
 const eraser = document.querySelector(".eraser");
+const colorButton = document.querySelector(".color-mode");
 
-//should set this into window.load
+let color = true;
+let eraseMode = false;
+
+//should set this into window.load (ADD DEFAULT SETTINGS HERE!)
 setGridSize(16);
+coloring();
+
 
 
 // setting the grid size based on slider value, default is 16 x 16
@@ -34,7 +40,6 @@ function setGridSize(num) {
             gridBox.style.borderStyle = "solid";
         }
     }
-    coloring();
 }
 
 //clears grid boxes so aren't made on top of each other after each grid sizing
@@ -66,13 +71,49 @@ drawingBoard.onmouseup = function() {
 }
 //colors when mouse is pressed + hovered over a div simultaneously
 function coloring() {
-    document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
-        if (mouseDown === 1) {
-            item.style.backgroundColor = colorMode.value;
-        }
-    }));
+    if (color === true) {
+        document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
+            if (mouseDown === 1) {
+                item.style.backgroundColor = colorPicker.value;
+            }
+        }));
+    }
 }
 
+function setBorder(tool) {
+    tool.style.borderColor = "gold";
+    tool.style.borderWidth = "3px";
+    tool.style.borderStyle = "solid";
+}
+
+function noBorder(tool) {
+    tool.style.borderColor = "color";
+    tool.style.borderWidth = "medium";
+    tool.style.borderStyle = "none";
+}
+
+colorButton.addEventListener("click", function(e) {
+    color = true;
+    eraseMode = false;
+    setBorder(colorButton);
+    noBorder(eraser);
+    coloring();
+});
+
+eraser.addEventListener("click", function(e) {
+    color = false;
+    eraseMode = true;
+    setBorder(eraser);
+    noBorder(colorButton);
+    erasing();
+});
 function erasing() {
-
+    if (eraseMode === true) {
+        document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
+            if (mouseDown === 1) {
+                item.style.backgroundColor = "#f6f4f4";
+            }
+        }));
+    }
 }
+
