@@ -1,5 +1,4 @@
 
-
 const drawingBoard = document.querySelector(".drawing-board");
 const rangeSlider = document.querySelector(".mouseSlider");
 const rangeValue = document.querySelector("#rangeValue");
@@ -10,19 +9,18 @@ const clearButton = document.querySelector(".clear");
 const rainbowButton = document.querySelector(".rainbow");
 const gridButton = document.querySelector(".grid-size");
 
+//default settings
 let colorMode = true;
 let eraseMode = false;
 let rainbowMode = false;
 let gridMode = false;
-
-//Default settings
 window.onload = () => {
     setGridSize(16);
     setBorder(colorButton);
     coloring();
 };
 
-// setting the grid size based on slider value, default is 16 x 16
+// setting the grid size based on slider value
 //makes rows of divs and makes divs in each row
 function setGridSize(num) {
     clearingGridContainer(drawingBoard);
@@ -40,10 +38,11 @@ function setGridSize(num) {
             gridBox.style.flex = "1";
         }
     }
-    //Keeps coloring/erasing even if grid size is changed
+    //keeps coloring/erasing even if grid size is changed
     coloring();
     erasing();
     randomColoring();
+    toggleGrid();
 }
 
 //clears grid boxes so aren't made on top of each other after each grid sizing
@@ -64,12 +63,12 @@ rangeSlider.addEventListener("input", function(e) {
     gridSizeLabel(rangeSlider.valueAsNumber);
 });
 
+//creates or removes gold border based on current mode in toolbar
 function setBorder(tool) {
     tool.style.borderColor = "gold";
     tool.style.borderWidth = "3px";
     tool.style.borderStyle = "solid";
 }
-
 function noBorder(tool) {
     tool.style.borderColor = "color";
     tool.style.borderWidth = "medium";
@@ -84,6 +83,7 @@ drawingBoard.onmousedown = function() {
 drawingBoard.onmouseup = function() {
     mouseDown = 0;
 }
+
 //colors when mouse is pressed + hovered over a div simultaneously
 function coloring() {
     if (colorMode === true) {
@@ -94,7 +94,7 @@ function coloring() {
         }));
     }
 }
-
+//toggles off all other modes except for coloring
 colorButton.addEventListener("click", function(e) {
     colorMode = true;
     eraseMode = false;
@@ -105,34 +105,7 @@ colorButton.addEventListener("click", function(e) {
     coloring();
 });
 
-eraserButton.addEventListener("click", function(e) {
-    eraseMode = true;
-    colorMode = false;
-    rainbowMode = false;;
-    setBorder(eraserButton);
-    noBorder(colorButton);
-    noBorder(rainbowButton);
-    erasing();
-});
-function erasing() {
-    if (eraseMode === true) {
-        document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
-            if (mouseDown === 1) {
-                item.style.backgroundColor = "#f6f4f4";
-            }
-        }));
-    }
-}
-
-rainbowButton.addEventListener("click", function(e) {
-    rainbowMode = true;
-    colorMode = false;
-    eraseMode = false;
-    setBorder(rainbowButton);
-    noBorder(colorButton);
-    noBorder(eraserButton);
-    randomColoring();
-});
+//colors with random hex values when mouse is pressed + hovered over a div simultaneously
 function randomColoring() {
     if (rainbowMode === true) {
         document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
@@ -143,17 +116,52 @@ function randomColoring() {
         }));
     }
 }
+//toggles off all other modes except for erasing
+rainbowButton.addEventListener("click", function(e) {
+    rainbowMode = true;
+    colorMode = false;
+    eraseMode = false;
+    setBorder(rainbowButton);
+    noBorder(colorButton);
+    noBorder(eraserButton);
+    randomColoring();
+});
+
+//erases when mouse is pressed + hovered over a div simultaneously
+function erasing() {
+    if (eraseMode === true) {
+        document.querySelectorAll(".individual-box").forEach(item => item.addEventListener("mouseover", function(e) {
+            if (mouseDown === 1) {
+                item.style.backgroundColor = "#f6f4f4";
+            }
+        }));
+    }
+}
+//toggles off all other modes except for erasing
+eraserButton.addEventListener("click", function(e) {
+    eraseMode = true;
+    colorMode = false;
+    rainbowMode = false;;
+    setBorder(eraserButton);
+    noBorder(colorButton);
+    noBorder(rainbowButton);
+    erasing();
+});
 
 //clear the canvas by changing color of all boxes to white
 function clearCanvas() {
     document.querySelectorAll(".individual-box").forEach(item => item.style.backgroundColor = "#f6f4f4");
+    //creates gold border for clear button for short period of time
+    setBorder(clearButton);
+    setTimeout(() => {
+        noBorder(clearButton);
+    },300);
 }
 clearButton.addEventListener("click", clearCanvas);
 
 //toggle grid lines on and off
 function toggleGrid() {
-    if (gridMode === false) {
-        gridMode = true;
+    if (gridMode === true) {
         document.querySelectorAll(".individual-box").forEach(item => {
             item.style.borderColor = "black";
             item.style.borderWidth = "1px";
@@ -162,10 +170,12 @@ function toggleGrid() {
         setBorder(gridButton);
     }
     else {
-        gridMode = false;
         document.querySelectorAll(".individual-box").forEach(item => noBorder(item));
         noBorder(gridButton);
     }
 }
-gridButton.addEventListener("click", toggleGrid);
+gridButton.addEventListener("click", function(e) {
+    gridMode = !gridMode;
+    toggleGrid();
+});
 
